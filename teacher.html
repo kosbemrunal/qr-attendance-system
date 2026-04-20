@@ -61,57 +61,14 @@ function generateQR() {
 
     window.currentSession = createdAt;
 
-    const sessionData = {
-        subject: subject,
-        createdAt: createdAt,
-        duration: duration
-    };
-
-    const session = JSON.stringify(sessionData);
-
-    db.collection("sessions").add(sessionData);
-
-    document.getElementById("qrcode").innerHTML = "";
-
-    new QRCode(document.getElementById("qrcode"), session);
+    
 
     if (unsubscribe) {
         unsubscribe(); // stop previous listener
     }
 
     // ⭐ MOVE LISTENER HERE
-    unsubscribe = db.collection("attendance")
-    .where("sessionId", "==", createdAt)
-    .onSnapshot((snapshot) => {
-
-        let table = document.getElementById("attendanceTable");
-
-        table.innerHTML = `
-        <tr>
-            <th>Student</th>
-            <th>Subject</th>
-            <th>Status</th>
-            <th>Time</th>
-        </tr>`;
-
-        snapshot.forEach(doc => {
-            let data = doc.data();
-
-            let row = table.insertRow();
-
-            row.insertCell(0).innerText = data.student;
-            row.insertCell(1).innerText = data.subject;
-            let statusCell = row.insertCell(2);
-            statusCell.innerText = data.status;
-
-            if (data.status === "Late") {
-                statusCell.style.color = "orange";
-            }
-            row.insertCell(3).innerText =
-                new Date(data.time.seconds * 1000).toLocaleString();
-        });
-    });
-
+    
     navigator.geolocation.getCurrentPosition((position) => {
 
         const teacherLat = position.coords.latitude;
@@ -134,8 +91,41 @@ function generateQR() {
         new QRCode(document.getElementById("qrcode"), session);
 
         // listener stays same below...
+     unsubscribe = db.collection("attendance")
+        .where("sessionId", "==", createdAt)
+        .onSnapshot((snapshot) => {
+    
+            let table = document.getElementById("attendanceTable");
+    
+            table.innerHTML = `
+            <tr>
+                <th>Student</th>
+                <th>Subject</th>
+                <th>Status</th>
+                <th>Time</th>
+            </tr>`;
+    
+            snapshot.forEach(doc => {
+                let data = doc.data();
+    
+                let row = table.insertRow();
+    
+                row.insertCell(0).innerText = data.student;
+                row.insertCell(1).innerText = data.subject;
+                let statusCell = row.insertCell(2);
+                statusCell.innerText = data.status;
+    
+                if (data.status === "Late") {
+                    statusCell.style.color = "orange";
+                }
+                row.insertCell(3).innerText =
+                    new Date(data.time.seconds * 1000).toLocaleString();
+            });
+        });
 
-    });
+    }, () => {
+        alert("Location permission required!");
+    }); 
 }
 
 
