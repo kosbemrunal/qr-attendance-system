@@ -21,6 +21,17 @@
 <button onclick="generateQR()">Generate QR</button>
 <div id="qrcode"></div>
 
+<h3>Attendance List</h3>
+
+<table border="1" id="attendanceTable">
+    <tr>
+        <th>Student</th>
+        <th>Subject</th>
+        <th>Status</th>
+        <th>Time</th>
+    </tr>
+</table>
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -46,6 +57,7 @@ function generateQR() {
     const duration = document.getElementById("duration").value;
 
     const createdAt = new Date().getTime();
+    window.currentSession = createdAt;
 
     const sessionData = {
         subject: subject,
@@ -62,24 +74,32 @@ function generateQR() {
 
     new QRCode(document.getElementById("qrcode"), session);
 }
+db.collection("attendance")
+.where("sessionId", "==", window.currentSession)
+.onSnapshot((snapshot) => {
 
-function onScanSuccess(decodedText) {
+    let table = document.getElementById("attendanceTable");
 
-    // Store attendance
-    db.collection("attendance").add({
-        student: "Student1",
-        session: decodedText,
-        time: new Date()
+    table.innerHTML = `
+    <tr>
+        <th>Student</th>
+        <th>Subject</th>
+        <th>Status</th>
+        <th>Time</th>
+    </tr>`;
+
+    snapshot.forEach(doc => {
+        let data = doc.data();
+
+        let row = table.insertRow();
+
+        row.insertCell(0).innerText = data.student;
+        row.insertCell(1).innerText = data.subject;
+        row.insertCell(2).innerText = data.status;
+        row.insertCell(3).innerText = new Date(data.time.seconds * 1000).toLocaleString();
     });
+});
 
-    document.getElementById("result").innerText =
-        "Attendance Marked for: " + decodedText;
-}
-
-let scanner = new Html5QrcodeScanner(
-    "reader", { fps: 10, qrbox: 250 });
-
-scanner.render(onScanSuccess);
 
 
 </script>
