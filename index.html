@@ -19,6 +19,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
+
+    const studentName = localStorage.getItem("student");
+
+    if (!studentName) {
+        // If no login → redirect back
+        window.location.href = "student-login.html";
+    }
 const firebaseConfig = {
   apiKey: "AIzaSyDT0imNSe8CMSWuxDlzk1oYWefUltH-qsU",
   authDomain: "qr-attendance-system-f58ea.firebaseapp.com",
@@ -56,7 +63,7 @@ function onScanSuccess(decodedText) {
         status = "Present";
     }
 
-    const studentName = "Student1";
+    
     const docId = studentName + "_" + createdTime;
 
     db.collection("attendance").doc(docId).set({
