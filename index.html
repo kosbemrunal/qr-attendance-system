@@ -20,12 +20,14 @@
 
 <script>
 
-    const studentName = localStorage.getItem("student");
+const studentName = localStorage.getItem("student");
 
-    if (!studentName) {
-        // If no login → redirect back
-        window.location.href = "student-login.html";
-    }
+if (!studentName) {
+    // If no login → redirect back
+    window.location.href = "student-login.html";
+}
+
+
 const firebaseConfig = {
   apiKey: "AIzaSyDT0imNSe8CMSWuxDlzk1oYWefUltH-qsU",
   authDomain: "qr-attendance-system-f58ea.firebaseapp.com",
@@ -63,14 +65,14 @@ function onScanSuccess(decodedText) {
         status = "Present";
     }
 
-    
     const docId = studentName + "_" + createdTime;
 
-    db.collection("attendance").doc(docId).set({
+   db.collection("attendance").doc(docId).set({
         student: studentName,
         subject: data.subject,
         status: status,
-        time: new Date()
+        time: new Date(),
+        sessionId: data.createdAt   // ⭐ IMPORTANT
     });
 
     document.getElementById("result").innerText =
@@ -87,3 +89,4 @@ scanner.render(onScanSuccess);
 
 </body>
 </html>
+
