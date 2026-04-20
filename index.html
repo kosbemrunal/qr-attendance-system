@@ -78,6 +78,10 @@ function onScanSuccess(decodedText) {
 
         const teacherLat = data.lat;
         const teacherLng = data.lng;
+       if (!teacherLat || !teacherLng) {
+            document.getElementById("result").innerText = "Invalid QR (no location)";
+            return;
+        }
 
         const distance = getDistance(studentLat, studentLng, teacherLat, teacherLng);
 
