@@ -57,6 +57,7 @@ function generateQR() {
     const duration = document.getElementById("duration").value;
 
     const createdAt = new Date().getTime();
+
     window.currentSession = createdAt;
 
     const sessionData = {
@@ -67,38 +68,40 @@ function generateQR() {
 
     const session = JSON.stringify(sessionData);
 
-    // Save in Firebase
     db.collection("sessions").add(sessionData);
 
     document.getElementById("qrcode").innerHTML = "";
 
     new QRCode(document.getElementById("qrcode"), session);
-}
-db.collection("attendance")
-.where("sessionId", "==", window.currentSession)
-.onSnapshot((snapshot) => {
 
-    let table = document.getElementById("attendanceTable");
+    // ⭐ MOVE LISTENER HERE
+    db.collection("attendance")
+    .where("sessionId", "==", createdAt)
+    .onSnapshot((snapshot) => {
 
-    table.innerHTML = `
-    <tr>
-        <th>Student</th>
-        <th>Subject</th>
-        <th>Status</th>
-        <th>Time</th>
-    </tr>`;
+        let table = document.getElementById("attendanceTable");
 
-    snapshot.forEach(doc => {
-        let data = doc.data();
+        table.innerHTML = `
+        <tr>
+            <th>Student</th>
+            <th>Subject</th>
+            <th>Status</th>
+            <th>Time</th>
+        </tr>`;
 
-        let row = table.insertRow();
+        snapshot.forEach(doc => {
+            let data = doc.data();
 
-        row.insertCell(0).innerText = data.student;
-        row.insertCell(1).innerText = data.subject;
-        row.insertCell(2).innerText = data.status;
-        row.insertCell(3).innerText = new Date(data.time.seconds * 1000).toLocaleString();
+            let row = table.insertRow();
+
+            row.insertCell(0).innerText = data.student;
+            row.insertCell(1).innerText = data.subject;
+            row.insertCell(2).innerText = data.status;
+            row.insertCell(3).innerText =
+                new Date(data.time.seconds * 1000).toLocaleString();
+        });
     });
-});
+}
 
 
 
