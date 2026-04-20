@@ -11,6 +11,10 @@
 
 <h2>Scan QR for Attendance</h2>
 
+<button onclick="startScanner()">Start Scanner</button>
+
+<br><br>
+
 <div id="reader" style="width:300px;"></div>
 <p id="result"></p>
 
@@ -97,6 +101,15 @@ function onScanSuccess(decodedText) {
     });
 
 }
+
+function startScanner() {
+
+    let scanner = new Html5QrcodeScanner(
+        "reader", { fps: 10, qrbox: 250 });
+
+    scanner.render(onScanSuccess);
+}
+    
 </script>
 
 
