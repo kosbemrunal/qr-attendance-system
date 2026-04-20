@@ -8,6 +8,15 @@
 <body>
 
 <h2>Teacher Dashboard</h2>
+<label>Subject:</label>
+<input type="text" id="subject" placeholder="Enter Subject">
+
+<br><br>
+
+<label>Time Slot (minutes):</label>
+<input type="number" id="duration" placeholder="e.g. 3">
+
+<br><br>
 
 <button onclick="generateQR()">Generate QR</button>
 <div id="qrcode"></div>
@@ -29,19 +38,31 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-function generateQR() {
-    const session = "CLASS_" + Date.now();
 
-    // Save session to Firebase
-    db.collection("sessions").doc(session).set({
-        active: true,
-        createdAt: new Date()
-    });
+
+function generateQR() {
+
+    const subject = document.getElementById("subject").value;
+    const duration = document.getElementById("duration").value;
+
+    const createdAt = new Date().getTime();
+
+    const sessionData = {
+        subject: subject,
+        createdAt: createdAt,
+        duration: duration
+    };
+
+    const session = JSON.stringify(sessionData);
+
+    // Save in Firebase
+    db.collection("sessions").add(sessionData);
 
     document.getElementById("qrcode").innerHTML = "";
 
     new QRCode(document.getElementById("qrcode"), session);
 }
+
 function onScanSuccess(decodedText) {
 
     // Store attendance
