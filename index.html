@@ -67,26 +67,38 @@ function onScanSuccess(decodedText) {
 
     const docId = studentName + "_" + createdTime;
 
-   db.collection("attendance").doc(docId).set({
-        student: studentName,
-        subject: data.subject,
-        status: status,
-        time: new Date(),
-        sessionId: data.createdAt   // ⭐ IMPORTANT
+   navigator.geolocation.getCurrentPosition((position) => {
+
+    const studentLat = position.coords.latitude;
+        const studentLng = position.coords.longitude;
+
+        const teacherLat = data.lat;
+        const teacherLng = data.lng;
+
+        const distance = getDistance(studentLat, studentLng, teacherLat, teacherLng);
+
+        if (distance > 0.1) {
+            document.getElementById("result").innerText =
+                "You are too far! Attendance blocked.";
+            return;
+        }
+
+        // ✅ ONLY HERE we save attendance
+        db.collection("attendance").doc(docId).set({
+            student: studentName,
+            subject: data.subject,
+            status: status,
+            time: new Date(),
+            sessionId: data.createdAt
+        });
+
+        document.getElementById("result").innerText =
+            "Attendance Marked: " + status;
     });
 
-    document.getElementById("result").innerText =
-        "Attendance Marked: " + status;
 }
-
-
-
-let scanner = new Html5QrcodeScanner(
-    "reader", { fps: 10, qrbox: 250 });
-
-scanner.render(onScanSuccess);
 </script>
+
 
 </body>
 </html>
-
