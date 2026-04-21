@@ -78,14 +78,14 @@ function onScanSuccess(decodedText) {
 
         const teacherLat = data.lat;
         const teacherLng = data.lng;
-       if (!teacherLat || !teacherLng) {
+
+        if (!teacherLat || !teacherLng) {
             document.getElementById("result").innerText = "Invalid QR (no location)";
             return;
         }
-
         const distance = getDistance(studentLat, studentLng, teacherLat, teacherLng);
-
-        if (distance > 0.1) {
+        console.log("Distance:", distance);
+        if (distance > 0.2) {
             document.getElementById("result").innerText =
                 "You are too far! Attendance blocked.";
             return;
