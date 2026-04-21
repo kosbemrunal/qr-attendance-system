@@ -33,6 +33,10 @@
 <input type="text" id="rollNumber" placeholder="Enter Roll Number">
 <br>
 <button onclick="login()">Login</button>
+<button onclick="goTeacher()" style="background-color: blue;">
+    Teacher Login
+</button>
+
 
 <p id="error" style="color:red;"></p>
 
@@ -67,7 +71,9 @@ function login() {
     // Redirect to scanner page
     window.location.href = "index.html";
 }
-
+function goTeacher() {
+    window.location.href = "teacher-login.html";
+}
 </script>
 
 </body>
