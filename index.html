@@ -84,7 +84,7 @@ function onScanSuccess(decodedText) {
             return;
         }
         const distance = getDistance(studentLat, studentLng, teacherLat, teacherLng);
-        console.log("Distance:", distance);
+        alert("Distance: " + distance);
         if (distance > 0.2) {
             document.getElementById("result").innerText =
                 "You are too far! Attendance blocked.";
